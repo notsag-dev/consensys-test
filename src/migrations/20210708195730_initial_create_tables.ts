@@ -37,6 +37,7 @@ export async function up(knex: Knex): Promise<void> {
         .index()
         .references('id')
         .inTable('rooms');
+      table.integer('slot').notNullable();
     });
 }
 
