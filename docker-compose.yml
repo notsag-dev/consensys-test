@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+  booking_api:
+    container_name: booking_api
+    build:
+      context: booking-api
+    depends_on:
+      - database
+
+  database:
+    image: postgres:13
+    restart: always
+    container_name: database_booking_api
+    volumes:
+      - ./database/postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./database/.env
