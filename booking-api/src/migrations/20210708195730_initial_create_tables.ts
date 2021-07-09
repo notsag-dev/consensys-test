@@ -18,6 +18,7 @@ export async function up(knex: Knex): Promise<void> {
         .primary()
         .defaultTo(knex.raw('uuid_generate_v4()'));
       table.string('name').notNullable().index();
+      table.string('company').notNullable().index();
     })
     .createTableIfNotExists('bookings', function (table) {
       table

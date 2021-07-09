@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import { connectToDatabase, getDatabase } from './adapters/database';
+import express from 'express';
+import { setEndpoints } from './http';
 
 dotenv.config({
   path: path.resolve(__dirname, '../.env'),
@@ -26,3 +28,8 @@ function initDb() {
 }
 
 init();
+
+const server = express();
+setEndpoints(server);
+
+server.listen(5000);
