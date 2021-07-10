@@ -1,25 +1,17 @@
-import { Express, Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { RoomRepository } from '../repositories/room';
-import { BookingRepository } from '../repositories/booking';
-import { UserRepository } from '../repositories/user';
-import { getSaltedHash } from '../lib/auth';
+import { Express, Request, Response } from 'express';
 import { RegisterUserUsecase } from '../usecases/registerUser';
+import { LoginUserUsecase } from '../usecases/loginUser';
 
 interface SetAuthEndpointsArgs {
   server: Express;
-  roomRepository: RoomRepository;
-  bookingRepository: BookingRepository;
-  userRepository: UserRepository;
-  authMiddleware: (req: Request, res: Response, next: NextFunction) => void;
   registerUserUsecase: RegisterUserUsecase;
+  loginUserUsecase: LoginUserUsecase;
 }
 
 export function setAuthEndpoints(args: SetAuthEndpointsArgs) {
-  const { server, userRepository, registerUserUsecase } = args;
+  const { server, registerUserUsecase, loginUserUsecase } = args;
 
   server.post('/register', async (req: Request, res: Response) => {
-    // TODO add owasp-password-strength-test
     if (req.body === undefined) {
       res.status(400).send();
       return;
@@ -53,14 +45,18 @@ export function setAuthEndpoints(args: SetAuthEndpointsArgs) {
 
   server.post('/login', async (req: Request, res: Response) => {
     const { username, password } = req.body;
-    const user = await userRepository.getByUsername(username);
-    const saltedHashedPassword = getSaltedHash(password, 'test-consensys'); // TODO move to env
+    if (username === undefined || password === undefined) {
+      res.status(400).json({
+        error: 'Missing one or more required body params: username, password',
+      });
+    }
 
-    if (user === undefined || user.password !== saltedHashedPassword) {
+    const loginResult = await loginUserUsecase(username, password);
+
+    if (loginResult.code === 'ERROR') {
       res.status(401).json({ error: 'Incorrect user or password' });
       return;
     }
-    const token = jwt.sign(user, process.env.JWT_KEY || 'FIX THIS'); // FIXME
-    res.status(200).send({ token });
+    res.status(200).send({ token: loginResult.token });
   });
 }
