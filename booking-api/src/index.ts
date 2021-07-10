@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
+import express from 'express';
 import path from 'path';
 import { connectToDatabase, getDatabase } from './adapters/database';
-import express from 'express';
 import { setEndpoints } from './http';
 import { buildBookingRepository } from './repositories/booking';
 import { buildRoomRepository } from './repositories/room';
@@ -32,4 +32,7 @@ const roomRepository = buildRoomRepository({ getDatabase });
 const server = express();
 setEndpoints({ server, bookingRepository, roomRepository });
 
-server.listen(5000);
+server.use(express.json());
+server.listen(5000, () => {
+  console.log('Listening on port 5000');
+});
