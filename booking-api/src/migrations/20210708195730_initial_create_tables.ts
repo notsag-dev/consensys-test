@@ -9,7 +9,9 @@ export async function up(knex: Knex): Promise<void> {
         .notNullable()
         .primary()
         .defaultTo(knex.raw('uuid_generate_v4()'));
-      table.string('name').notNullable().index();
+      table.string('name').notNullable();
+      table.timestamp('createdAt').notNullable().defaultTo(knex.fn.now());
+      table.timestamp('updatedAt').notNullable().defaultTo(knex.fn.now());
     })
     .createTableIfNotExists('rooms', function (table) {
       table
@@ -17,8 +19,10 @@ export async function up(knex: Knex): Promise<void> {
         .notNullable()
         .primary()
         .defaultTo(knex.raw('uuid_generate_v4()'));
-      table.string('name').notNullable().index();
-      table.string('company').notNullable().index();
+      table.string('name').notNullable().unique();
+      table.string('company').notNullable();
+      table.timestamp('createdAt').notNullable().defaultTo(knex.fn.now());
+      table.timestamp('updatedAt').notNullable().defaultTo(knex.fn.now());
     })
     .createTableIfNotExists('bookings', function (table) {
       table
@@ -39,6 +43,9 @@ export async function up(knex: Knex): Promise<void> {
         .references('id')
         .inTable('rooms');
       table.integer('slot').notNullable();
+      table.timestamp('createdAt').notNullable().defaultTo(knex.fn.now());
+      table.timestamp('updatedAt').notNullable().defaultTo(knex.fn.now());
+      table.unique(['roomId', 'slot']);
     });
 }
 

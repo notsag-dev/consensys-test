@@ -3,14 +3,12 @@ import path from 'path';
 import { connectToDatabase, getDatabase } from './adapters/database';
 import express from 'express';
 import { setEndpoints } from './http';
+import { buildBookingRepository } from './repositories/booking';
+import { buildRoomRepository } from './repositories/room';
 
 dotenv.config({
   path: path.resolve(__dirname, '../.env'),
 });
-
-async function init(): Promise<void> {
-  initDb();
-}
 
 function initDb() {
   if (
@@ -27,9 +25,11 @@ function initDb() {
   console.log('Successfully connected to the database.');
 }
 
-init();
+initDb();
+const bookingRepository = buildBookingRepository({ getDatabase });
+const roomRepository = buildRoomRepository({ getDatabase });
 
 const server = express();
-setEndpoints(server);
+setEndpoints({ server, bookingRepository, roomRepository });
 
 server.listen(5000);

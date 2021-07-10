@@ -9,7 +9,8 @@
     "build": "tsc -p .",
     "migrate": "knex migrate:latest --knexfile src/knexfile.ts",
     "add-migration": "knex migrate:make --knexfile src/knexfile.ts",
-    "rollback": "knex migrate:rollback --knexfile src/knexfile.ts"
+    "rollback": "knex migrate:rollback --knexfile src/knexfile.ts",
+    "dev": "nodemon src/index.ts"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
