@@ -1,38 +1,44 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
-import { connectToDatabase, getDatabase } from './adapters/database';
+import { getDatabase, initDatabase } from './adapters/database';
 import { setEndpoints } from './http';
 import { buildBookingRepository } from './repositories/booking';
 import { buildRoomRepository } from './repositories/room';
+import { buildUserRepository } from './repositories/user';
+import jwt from 'express-jwt';
 
 dotenv.config({
   path: path.resolve(__dirname, '../.env'),
 });
 
-function initDb() {
-  if (
-    process.env.POSTGRES_HOST === undefined ||
-    process.env.POSTGRES_USER === undefined ||
-    process.env.POSTGRES_PASSWORD === undefined ||
-    process.env.POSTGRES_DB === undefined
-  ) {
-    throw new Error('Please set database configs in .env file');
-  }
+initDatabase();
 
-  console.log('Connecting to the database...');
-  connectToDatabase();
-  console.log('Successfully connected to the database.');
+if (process.env.JWT_KEY === undefined) {
+  throw new Error('Please set JWT key in .env file');
 }
 
-initDb();
+const authMiddleware = jwt({
+  secret: process.env.JWT_KEY,
+  algorithms: ['HS256'],
+  requestProperty: 'authUser',
+});
+
 const bookingRepository = buildBookingRepository({ getDatabase });
 const roomRepository = buildRoomRepository({ getDatabase });
+const userRepository = buildUserRepository({ getDatabase });
 
 const server = express();
-setEndpoints({ server, bookingRepository, roomRepository });
-
 server.use(express.json());
+
+setEndpoints({
+  server,
+  bookingRepository,
+  roomRepository,
+  userRepository,
+  authMiddleware,
+});
+
 server.listen(5000, () => {
   console.log('Listening on port 5000');
 });

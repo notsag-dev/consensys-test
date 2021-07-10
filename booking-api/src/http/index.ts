@@ -1,5 +1,5 @@
-import { Express, Request, Response } from 'express';
-import { setEndpoints as setBookingEndpoints } from './booking';
+import { Express, Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
 import { RoomRepository } from '../repositories/room';
 import { BookingRepository } from '../repositories/booking';
 import { UserRepository } from '../repositories/user';
@@ -10,55 +10,68 @@ interface SetEndpointsParams {
   roomRepository: RoomRepository;
   bookingRepository: BookingRepository;
   userRepository: UserRepository;
+  authMiddleware: (req: Request, res: Response, next: NextFunction) => void;
 }
 
 export function setEndpoints(params: SetEndpointsParams) {
-  const { server, roomRepository, bookingRepository, userRepository } = params;
+  const {
+    server,
+    roomRepository,
+    bookingRepository,
+    userRepository,
+    authMiddleware,
+  } = params;
 
-  server.get('/rooms', async (req: Request, res: Response) => {
+  server.get('/rooms', authMiddleware, async (_: Request, res: Response) => {
     const rooms = await roomRepository.getAll();
     res.status(200).send(rooms);
   });
 
-  server.get('/rooms/availability', async (req: Request, res: Response) => {
-    const { slot } = req.query;
-    const paramError = {
-      error: 'Pass "slot" as a query string parameter with value from 0 to 23',
-    };
-    if (slot === undefined || typeof slot !== 'string') {
-      res.status(400).json(paramError);
-      return;
+  server.get(
+    '/rooms/availability',
+    authMiddleware,
+    async (req: Request, res: Response) => {
+      const { slot } = req.query;
+      const paramError = {
+        error:
+          'Pass "slot" as a query string parameter with value from 0 to 23',
+      };
+      if (slot === undefined || typeof slot !== 'string') {
+        res.status(400).json(paramError);
+        return;
+      }
+      const numSlot = parseInt(slot, 10);
+      if (numSlot < 0 || numSlot > 23) {
+        res.status(400).json(paramError);
+        return;
+      }
+      const freeRooms = await bookingRepository.getAvailableRooms(numSlot);
+      res.status(200).send(freeRooms);
     }
-    const numSlot = parseInt(slot, 10);
-    if (numSlot < 0 || numSlot > 23) {
-      res.status(400).json(paramError);
-      return;
-    }
-    const freeRooms = await bookingRepository.getAvailableRooms(numSlot);
-    res.status(200).send(freeRooms);
-  });
+  );
 
-  server.post('/rooms/book', async (req: Request, res: Response) => {
-    const userId = '1'; // TODO get actual user got in middleware when ready
-    const user = await userRepository.get(userId);
-    if (!user) {
+  server.post('/rooms/book', authMiddleware, async (req, res) => {
+    const user = req.authUser;
+    if (user === undefined || user.id === undefined) {
       res.status(401).send();
       return;
     }
-
     const { slot, roomId } = req.body;
     try {
-      await bookingRepository.create({ userId, roomId, slot });
+      await bookingRepository.create({ userId: user.id, roomId, slot });
     } catch (error) {
       res.status(500).json({ error: 'error while booking room' });
       return;
     }
-
     res.status(200).json({ message: 'Room booked successfully' });
   });
 
   server.post('/register', async (req: Request, res: Response) => {
-    // TODO owasp-password-strength-test
+    // TODO add owasp-password-strength-test
+    if (req.body === undefined) {
+      res.status(400).send();
+      return;
+    }
     const { username, password, name } = req.body;
 
     if (
@@ -68,7 +81,7 @@ export function setEndpoints(params: SetEndpointsParams) {
     ) {
       res.status(400).json({
         error:
-          'One or more required param is undefined: username, password, name',
+          'Missing one or more required body params: username, password, name',
       });
     }
 
@@ -77,7 +90,26 @@ export function setEndpoints(params: SetEndpointsParams) {
       res.status(400).json({ error: 'Username already taken' });
     }
 
-    const saltedHashPassword = getSaltedHash(password, 'test-consensys');
-    userRepository.create({ username, password: saltedHashPassword, name });
+    const saltedHashPassword = getSaltedHash(password, 'test-consensys'); // TODO move to env
+    await userRepository.create({
+      username,
+      password: saltedHashPassword,
+      name,
+    });
+
+    res.status(200).send();
+  });
+
+  server.post('/login', async (req: Request, res: Response) => {
+    const { username, password } = req.body;
+    const user = await userRepository.getByUsername(username);
+    const saltedHashedPassword = getSaltedHash(password, 'test-consensys'); // TODO move to env
+
+    if (user === undefined || user.password !== saltedHashedPassword) {
+      res.status(401).json({ error: 'Incorrect user or password' });
+      return;
+    }
+    const token = jwt.sign(user, process.env.JWT_KEY || 'FIX THIS'); // FIXME
+    res.status(200).send({ token });
   });
 }
