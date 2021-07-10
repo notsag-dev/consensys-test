@@ -1,9 +1,7 @@
 import { Express, Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
 import { RoomRepository } from '../repositories/room';
 import { BookingRepository } from '../repositories/booking';
 import { UserRepository } from '../repositories/user';
-import { getSaltedHash } from '../lib/auth';
 
 interface SetEndpointsParams {
   server: Express;
@@ -14,13 +12,7 @@ interface SetEndpointsParams {
 }
 
 export function setEndpoints(params: SetEndpointsParams) {
-  const {
-    server,
-    roomRepository,
-    bookingRepository,
-    userRepository,
-    authMiddleware,
-  } = params;
+  const { server, roomRepository, bookingRepository, authMiddleware } = params;
 
   server.get('/rooms', authMiddleware, async (_: Request, res: Response) => {
     const rooms = await roomRepository.getAll();
@@ -64,52 +56,5 @@ export function setEndpoints(params: SetEndpointsParams) {
       return;
     }
     res.status(200).json({ message: 'Room booked successfully' });
-  });
-
-  server.post('/register', async (req: Request, res: Response) => {
-    // TODO add owasp-password-strength-test
-    if (req.body === undefined) {
-      res.status(400).send();
-      return;
-    }
-    const { username, password, name } = req.body;
-
-    if (
-      username === undefined ||
-      password === undefined ||
-      name === undefined
-    ) {
-      res.status(400).json({
-        error:
-          'Missing one or more required body params: username, password, name',
-      });
-    }
-
-    const existingUser = await userRepository.getByUsername(username);
-    if (existingUser !== undefined) {
-      res.status(400).json({ error: 'Username already taken' });
-    }
-
-    const saltedHashPassword = getSaltedHash(password, 'test-consensys'); // TODO move to env
-    await userRepository.create({
-      username,
-      password: saltedHashPassword,
-      name,
-    });
-
-    res.status(200).send();
-  });
-
-  server.post('/login', async (req: Request, res: Response) => {
-    const { username, password } = req.body;
-    const user = await userRepository.getByUsername(username);
-    const saltedHashedPassword = getSaltedHash(password, 'test-consensys'); // TODO move to env
-
-    if (user === undefined || user.password !== saltedHashedPassword) {
-      res.status(401).json({ error: 'Incorrect user or password' });
-      return;
-    }
-    const token = jwt.sign(user, process.env.JWT_KEY || 'FIX THIS'); // FIXME
-    res.status(200).send({ token });
   });
 }
