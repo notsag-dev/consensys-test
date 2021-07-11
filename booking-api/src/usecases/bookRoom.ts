@@ -43,10 +43,11 @@ export function buildBookRoomUsecase(args: BuildBookRoomArgs): BookRoomUsecase {
   ): Promise<BookRoomResult> {
     try {
       await bookingRepository.create({ userId, roomId, slot });
-    } catch (_) {
+    } catch (err) {
+      console.log(err);
       return {
         code: 'ERROR',
-        message: 'Error while inserting booking into db',
+        message: 'Db error while inserting booking',
       };
     }
     return {
@@ -69,7 +70,8 @@ export function buildBookRoomUsecase(args: BuildBookRoomArgs): BookRoomUsecase {
         code: 'OK',
         availableRooms,
       };
-    } catch (_) {
+    } catch (err) {
+      console.log(err);
       return {
         code: 'ERROR',
         message: 'Db error while querying available rooms',

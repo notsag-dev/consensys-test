@@ -32,7 +32,16 @@ export function buildLoginUserUsecase(
     username: string,
     password: string
   ): Promise<LoginUserResult> {
-    const user = await userRepository.getByUsername(username);
+    let user;
+    try {
+      user = await userRepository.getByUsername(username);
+    } catch (err) {
+      console.log(err);
+      return {
+        code: 'ERROR',
+        message: 'Db error while querying user',
+      };
+    }
 
     if (user === undefined) {
       return {

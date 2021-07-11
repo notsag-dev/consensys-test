@@ -27,7 +27,17 @@ export function buildRegisterUserUsecase(
     password: string,
     name: string
   ): Promise<RegisterUserResult> {
-    const existingUser = await userRepository.getByUsername(username);
+    let existingUser;
+
+    try {
+      existingUser = await userRepository.getByUsername(username);
+    } catch (err) {
+      console.log(err);
+      return {
+        code: 'ERROR',
+        message: 'Db error while querying user',
+      };
+    }
 
     if (existingUser !== undefined) {
       return {
@@ -43,7 +53,8 @@ export function buildRegisterUserUsecase(
         password: saltedHashedPassword,
         name,
       });
-    } catch (_) {
+    } catch (err) {
+      console.log(err);
       return {
         code: 'ERROR',
         message: 'Error while inserting user into db',

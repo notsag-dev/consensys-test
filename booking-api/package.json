@@ -4,7 +4,7 @@
   "description": "Backend take-home exercise at Consensys",
   "author": "notsag-dev",
   "scripts": {
-    "test": "jest src",
+    "test": "jest --silent src",
     "start": "RUN_PROCESS=1 node dist/index.js",
     "build": "tsc -p .",
     "migrate": "knex migrate:latest --knexfile src/knexfile.ts",
