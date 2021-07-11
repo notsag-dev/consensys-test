@@ -12,7 +12,7 @@ export type Booking = {
 };
 
 export interface BookingRepository {
-  create(u: Booking): Promise<void>;
+  create(booking: Booking): Promise<void>;
   get(id: string): Promise<Booking | undefined>;
   getAvailableRooms(slot: number): Promise<Room[]>;
 }

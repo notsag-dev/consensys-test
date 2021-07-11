@@ -9,7 +9,7 @@ export type Room = {
 };
 
 export interface RoomRepository {
-  create(u: Room): Promise<void>;
+  create(room: Room): Promise<void>;
   get(id: string): Promise<Room | undefined>;
 }
 
