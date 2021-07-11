@@ -5,9 +5,9 @@ Very simple solution for the meeting room booking problem. It consists of a REST
 If running using Docker, just Docker and Docker Compose are required. Otherwise Node 14 and a Postgres database are required.
 
 ## Project setup
-In both `booking-api` and `database` folders there is a file called .env.example. Please copy their contents into a file called .env in their respective folders, and set the desired key values and postgres credentials that match with one another.
+In both `booking-api` and `database` folders there is a file called .env.example. Please copy their contents into a file called .env in their respective folders, and set the desired key values and Postgres credentials that match with one another.
 
-Note that the .env file for the database is used just when using Docker to create it, if running a database out of Docker setting up credentials in this file is not required.
+Note that the .env file for the database is used only when using Docker to create it, if running a database out of Docker setting up credentials in this file is not required.
 
 ## Docker run
 From the root folder of the repository, run:
@@ -18,7 +18,7 @@ docker-compose up
 
 The API should be running on port 5000 of the docker machine.
 
-Important: In order to make it easier to run the database and the node container with this only command, the node container is sleeping for 60 seconds before starting to ensure the database is configured correctly (Docker compose's depends_on is not enough in this case). In a more realistic scenario this would not be done this way and both containers would be run separately.
+Important: In order to make it easier to run the database with just this command, the node container is sleeping for 60 seconds before starting to ensure the database is configured correctly (Docker Compose's depends_on is not enough in this case). In a more realistic scenario this would not be done this way and both containers would be run separately.
 
 ## Build and run on local host
 From the `booking-api` folder, run:
