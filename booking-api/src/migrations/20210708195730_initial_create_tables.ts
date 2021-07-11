@@ -10,7 +10,7 @@ export async function up(knex: Knex): Promise<void> {
         .primary()
         .defaultTo(knex.raw('uuid_generate_v4()'));
       table.string('name').notNullable();
-      table.string('username').notNullable().index();
+      table.string('username').notNullable().unique();
       table.string('password').notNullable();
       table.timestamp('createdAt').notNullable().defaultTo(knex.fn.now());
       table.timestamp('updatedAt').notNullable().defaultTo(knex.fn.now());
