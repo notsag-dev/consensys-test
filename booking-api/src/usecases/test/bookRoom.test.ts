@@ -40,6 +40,9 @@ describe('BookRoomUsecase', () => {
             undefined
         );
       },
+      async getUserBookings(userId: string): Promise<Booking[]> {
+        return bookings.filter((b) => b.userId === userId);
+      },
     };
     bookRoomUsecase = buildBookRoomUsecase({
       bookingRepository: mockBookingRepository,

@@ -9,6 +9,7 @@ import { buildUserRepository } from './repositories/user';
 import { buildRegisterUserUsecase } from './usecases/registerUser';
 import { buildLoginUserUsecase } from './usecases/loginUser';
 import { buildBookRoomUsecase } from './usecases/bookRoom';
+import { buildGetUserBookingsUsecase } from './usecases/getUserBookings';
 
 dotenv.config({
   path: path.resolve(__dirname, '../.env'),
@@ -42,6 +43,9 @@ const loginUserUsecase = buildLoginUserUsecase({
   jwtKey: process.env.JWT_KEY,
 });
 const bookRoomUsecase = buildBookRoomUsecase({ bookingRepository });
+const getUserBookingsUsecase = buildGetUserBookingsUsecase({
+  bookingRepository,
+});
 
 const server = express();
 server.use(express.json());
@@ -52,6 +56,7 @@ setEndpoints({
   registerUserUsecase,
   loginUserUsecase,
   bookRoomUsecase,
+  getUserBookingsUsecase,
 });
 
 server.listen(5000, () => {

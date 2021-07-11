@@ -15,6 +15,7 @@ export interface BookingRepository {
   create(booking: Booking): Promise<void>;
   get(id: string): Promise<Booking | undefined>;
   getAvailableRooms(slot: number): Promise<Room[]>;
+  getUserBookings(userId: string): Promise<Booking[]>;
 }
 
 const tableName = 'bookings';
@@ -52,9 +53,16 @@ export function buildBookingRepository(
     return rows;
   }
 
+  async function getUserBookings(userId: string): Promise<Booking[]> {
+    const db = await getDatabase();
+    const bookings = await db(tableName).select().where('userId', userId);
+    return bookings;
+  }
+
   return {
     create,
     get,
     getAvailableRooms,
+    getUserBookings,
   };
 }

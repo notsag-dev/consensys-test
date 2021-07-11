@@ -4,6 +4,7 @@ import { setAuthEndpoints } from './auth';
 import { RegisterUserUsecase } from '../usecases/registerUser';
 import { LoginUserUsecase } from '../usecases/loginUser';
 import { BookRoomUsecase } from '../usecases/bookRoom';
+import { GetUserBookingsUsecase } from '../usecases/getUserBookings';
 
 interface SetEndpointsParams {
   server: Express;
@@ -11,6 +12,7 @@ interface SetEndpointsParams {
   registerUserUsecase: RegisterUserUsecase;
   loginUserUsecase: LoginUserUsecase;
   bookRoomUsecase: BookRoomUsecase;
+  getUserBookingsUsecase: GetUserBookingsUsecase;
 }
 
 export function setEndpoints(params: SetEndpointsParams) {
@@ -20,7 +22,13 @@ export function setEndpoints(params: SetEndpointsParams) {
     registerUserUsecase,
     loginUserUsecase,
     bookRoomUsecase,
+    getUserBookingsUsecase,
   } = params;
   setAuthEndpoints({ server, registerUserUsecase, loginUserUsecase });
-  setBookingEndpoints({ server, authMiddleware, bookRoomUsecase });
+  setBookingEndpoints({
+    server,
+    authMiddleware,
+    bookRoomUsecase,
+    getUserBookingsUsecase,
+  });
 }
