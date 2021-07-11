@@ -55,6 +55,9 @@ npm run test
   - slot: Number from 0 to 23 indicating the start of the meeting (from 00:00 to 23:00, respectively).
   - roomId: uuidv4 id of the room to book.
 
+`GET /booking`
+- Description: Get all bookings for user.
+
 `GET /booking/availability`
 - Description: Get all available rooms for a time slot.
 - Query string parameters:
