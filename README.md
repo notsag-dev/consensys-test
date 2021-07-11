@@ -53,12 +53,18 @@ npm run test
 - Description: Get all available rooms for a time slot.
 - Query string parameters:
   - slot: Number from 0 to 23 indicating the start of the meeting (from 00:00 to 23:00, respectively)
+- Headers:
+  - `Authorization` header with bearer token got from `/login`.
 
 `POST /bookings`
 - Description: Book a meeting room.
 - Body parameters (JSON):
   - slot: Number from 0 to 23 indicating the start of the meeting (from 00:00 to 23:00, respectively).
   - roomId: uuidv4 id of the room to book.
+- Headers:
+  - `Authorization` header with bearer token got from `/login`.
 
 `GET /bookings`
 - Description: Get all bookings for user.
+- Headers:
+  - `Authorization` header with bearer token got from `/login`.
