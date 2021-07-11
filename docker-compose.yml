@@ -4,6 +4,8 @@ services:
     container_name: booking_api
     build:
       context: booking-api
+    ports:
+      - "5000:5000"
     depends_on:
       - database
 
