@@ -49,6 +49,11 @@ npm run test
   - username
   - password
 
+`GET /room-availability`
+- Description: Get all available rooms for a time slot.
+- Query string parameters:
+  - slot: Number from 0 to 23 indicating the start of the meeting (from 00:00 to 23:00, respectively)
+
 `POST /bookings`
 - Description: Book a meeting room.
 - Body parameters (JSON):
@@ -57,8 +62,3 @@ npm run test
 
 `GET /bookings`
 - Description: Get all bookings for user.
-
-`GET /room-availability`
-- Description: Get all available rooms for a time slot.
-- Query string parameters:
-  - slot: Number from 0 to 23 indicating the start of the meeting (from 00:00 to 23:00, respectively)
