@@ -4,10 +4,11 @@ import express from 'express';
 import jwt from 'express-jwt';
 import { getDatabase, initDatabase } from './adapters/database';
 import { setEndpoints } from './http';
-import { buildBookingRepository } from './repositories/booking';
-import { buildRoomRepository } from './repositories/room';
-import { buildUserRepository } from './repositories/user';
 import { buildRegisterUserUsecase } from './usecases/registerUser';
+import { buildLoginUserUsecase } from './usecases/loginUser';
+import { buildBookingRepository } from './repositories/booking';
+import { buildUserRepository } from './repositories/user';
+import { buildBookRoomUsecase } from './usecases/bookRoom';
 
 dotenv.config({
   path: path.resolve(__dirname, '../.env'),
@@ -25,7 +26,6 @@ const authMiddleware = jwt({
 });
 
 const bookingRepository = buildBookingRepository({ getDatabase });
-const roomRepository = buildRoomRepository({ getDatabase });
 const userRepository = buildUserRepository({ getDatabase });
 
 if (process.env.PASSWORD_SALT === undefined) {
@@ -36,15 +36,22 @@ const registerUserUsecase = buildRegisterUserUsecase({
   passwordSalt: process.env.PASSWORD_SALT,
 });
 
+const loginUserUsecase = buildLoginUserUsecase({
+  userRepository,
+  passwordSalt: process.env.PASSWORD_SALT,
+  jwtKey: process.env.JWT_KEY,
+});
+const bookRoomUsecase = buildBookRoomUsecase({ bookingRepository });
+
 const server = express();
 server.use(express.json());
 
 setEndpoints({
   server,
-  bookingRepository,
-  roomRepository,
-  userRepository,
   authMiddleware,
+  registerUserUsecase,
+  loginUserUsecase,
+  bookRoomUsecase,
 });
 
 server.listen(5000, () => {
