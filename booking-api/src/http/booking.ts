@@ -14,7 +14,7 @@ export function setBookingEndpoints(args: SetBookingEndpointsArgs) {
     args;
 
   server.get(
-    '/room-availability',
+    '/rooms-availability',
     authMiddleware,
     async (req: Request, res: Response) => {
       const { slot } = req.query;
