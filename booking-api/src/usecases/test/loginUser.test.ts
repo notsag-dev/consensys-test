@@ -39,7 +39,7 @@ describe('LoginUserUsecase', () => {
   });
 
   describe('When loging in with correct credentials', () => {
-    it('it returns an OK code result', async () => {
+    it('returns an OK code result', async () => {
       const loginResult = await loginUserUsecase(
         'johnlennon',
         'givepeaceachance'
@@ -50,15 +50,18 @@ describe('LoginUserUsecase', () => {
   });
 
   describe('When loging in with wrong credentials', () => {
-    it('it returns an ERROR code result', async () => {
-      const loginResult = await loginUserUsecase('johnlennon', 'howdoyousleep');
+    it('returns an ERROR code result', async () => {
+      const loginResult = await loginUserUsecase(
+        'johnlennon',
+        'workingclasshero'
+      );
 
       expect(loginResult.code).toBe('ERROR');
     });
   });
 
   describe('When logging in from an account that does not exist', () => {
-    it('it returns an ERROR code result', async () => {
+    it('returns an ERROR code result', async () => {
       const loginResult = await loginUserUsecase('paulmccartney', 'yesterday');
 
       expect(loginResult.code).toBe('ERROR');
