@@ -13,7 +13,7 @@ export type RegisterUserUsecase = (
 ) => Promise<RegisterUserResult>;
 
 type RegisterUserResult = {
-  code: 'OK' | 'EXISTS';
+  code: 'OK' | 'ERROR_EXISTS' | 'ERROR';
   message: string;
 };
 
@@ -31,17 +31,24 @@ export function buildRegisterUserUsecase(
 
     if (existingUser !== undefined) {
       return {
-        code: 'EXISTS',
+        code: 'ERROR_EXISTS',
         message: 'Username already taken',
       };
     }
 
     const saltedHashedPassword = getSaltedHash(password, passwordSalt);
-    await userRepository.create({
-      username,
-      password: saltedHashedPassword,
-      name,
-    });
+    try {
+      await userRepository.create({
+        username,
+        password: saltedHashedPassword,
+        name,
+      });
+    } catch (_) {
+      return {
+        code: 'ERROR',
+        message: 'Error while inserting user into db',
+      };
+    }
 
     return {
       code: 'OK',
