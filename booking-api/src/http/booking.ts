@@ -14,7 +14,7 @@ export function setBookingEndpoints(args: SetBookingEndpointsArgs) {
     args;
 
   server.get(
-    '/booking/availability',
+    '/room-availability',
     authMiddleware,
     async (req: Request, res: Response) => {
       const { slot } = req.query;
@@ -50,7 +50,7 @@ export function setBookingEndpoints(args: SetBookingEndpointsArgs) {
     }
   );
 
-  server.post('/booking', authMiddleware, async (req, res) => {
+  server.post('/bookings', authMiddleware, async (req, res) => {
     const user = req.authUser;
     if (user === undefined || user.id === undefined) {
       res.status(401).send();
@@ -65,7 +65,7 @@ export function setBookingEndpoints(args: SetBookingEndpointsArgs) {
     res.status(200).json({ message: 'Room booked successfully' });
   });
 
-  server.get('/booking', authMiddleware, async (req, res) => {
+  server.get('/bookings', authMiddleware, async (req, res) => {
     const user = req.authUser;
     if (user === undefined || user.id === undefined) {
       res.status(401).send();
