@@ -18,7 +18,7 @@ docker-compose up
 
 The API should be running on port 5000 of the docker machine.
 
-Important: In order to make it easier to run the database with just this command, the node container is sleeping for 60 seconds before starting to ensure the database is configured correctly (Docker Compose's depends_on is not enough in this case). In a more realistic scenario this would not be done this way and both containers would be run separately.
+Important: In order to make it easier to run both the API and the database with just this command, the node container is sleeping for 60 seconds before starting to ensure the database is configured correctly (Docker Compose's depends_on is not enough in this case). In a more realistic scenario this would not be done this way and both containers would be run separately.
 
 ## Build and run on local host
 After setting up the database and updating the .env file accordingly, from the `booking-api` folder, run:
