@@ -1,5 +1,5 @@
 # Consensys test - Meeting room booking
-Very simple solution for the meeting room booking problem. It consists of a REST api with a few endpoints to handle user registration and room booking.
+Solution for the meeting room booking problem. It consists of a REST API with a few endpoints to handle user registration and room booking.
 
 ## Requirements
 If running using Docker, just Docker and Docker Compose are required. Otherwise Node 14 and a Postgres database are required.
