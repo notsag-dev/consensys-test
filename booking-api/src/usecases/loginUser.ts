@@ -58,7 +58,14 @@ export function buildLoginUserUsecase(
       };
     }
 
-    const token = jwt.sign(user, jwtKey);
+    const token = jwt.sign(
+      {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+      },
+      jwtKey
+    );
     return {
       code: 'OK',
       token,
