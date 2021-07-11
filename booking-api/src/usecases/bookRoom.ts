@@ -26,8 +26,8 @@ type GetAvailableRoomsResult =
 
 export interface BookRoomUsecase {
   bookRoom: (
-    roomId: string,
     userId: string,
+    roomId: string,
     slot: number
   ) => Promise<BookRoomResult>;
   getAvailableRooms: (slot: number) => Promise<GetAvailableRoomsResult>;

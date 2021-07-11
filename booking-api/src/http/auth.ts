@@ -35,8 +35,13 @@ export function setAuthEndpoints(args: SetAuthEndpointsArgs) {
       name
     );
 
-    if (registerUserResult.code === 'EXISTS') {
+    if (registerUserResult.code === 'ERROR_EXISTS') {
       res.status(400).json({ error: registerUserResult.message });
+      return;
+    }
+
+    if (registerUserResult.code === 'ERROR') {
+      res.status(500).send();
       return;
     }
 

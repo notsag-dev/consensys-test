@@ -51,7 +51,7 @@ describe('RegisterUserUsecase', () => {
         'givepeaceachance',
         'John Lennon'
       );
-      expect(registerUserResult.code).toBe('EXISTS');
+      expect(registerUserResult.code).toBe('ERROR_EXISTS');
     });
   });
 });
