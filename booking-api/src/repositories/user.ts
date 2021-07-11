@@ -12,7 +12,6 @@ export type User = {
 export interface UserRepository {
   create(user: User): Promise<void>;
   get(id: string): Promise<User | undefined>;
-  bulkInsert(users: User[]): Promise<void>;
   getByUsername(username: string): Promise<User | undefined>;
 }
 
@@ -43,18 +42,9 @@ export function buildUserRepository(
     }
   }
 
-  async function bulkInsert(users: User[]): Promise<void> {
-    const db = await getDatabase();
-    if (users.length === 0) {
-      return;
-    }
-    await db(tableName).insert(users);
-  }
-
   return {
     create,
     get,
     getByUsername,
-    bulkInsert,
   };
 }

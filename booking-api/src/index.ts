@@ -4,10 +4,10 @@ import express from 'express';
 import jwt from 'express-jwt';
 import { getDatabase, initDatabase } from './adapters/database';
 import { setEndpoints } from './http';
-import { buildRegisterUserUsecase } from './usecases/registerUser';
-import { buildLoginUserUsecase } from './usecases/loginUser';
 import { buildBookingRepository } from './repositories/booking';
 import { buildUserRepository } from './repositories/user';
+import { buildRegisterUserUsecase } from './usecases/registerUser';
+import { buildLoginUserUsecase } from './usecases/loginUser';
 import { buildBookRoomUsecase } from './usecases/bookRoom';
 
 dotenv.config({

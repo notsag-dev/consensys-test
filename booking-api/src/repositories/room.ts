@@ -11,8 +11,6 @@ export type Room = {
 export interface RoomRepository {
   create(u: Room): Promise<void>;
   get(id: string): Promise<Room | undefined>;
-  getAll(): Promise<Room[]>;
-  bulkInsert(rooms: Room[]): Promise<void>;
 }
 
 const tableName = 'rooms';
@@ -34,24 +32,8 @@ export function buildRoomRepository(
     }
   }
 
-  async function getAll() {
-    const db = await getDatabase();
-    const res = await db(tableName).select();
-    return res;
-  }
-
-  async function bulkInsert(rooms: Room[]): Promise<void> {
-    const db = await getDatabase();
-    if (rooms.length === 0) {
-      return;
-    }
-    await db(tableName).insert(rooms);
-  }
-
   return {
     create,
     get,
-    getAll,
-    bulkInsert,
   };
 }

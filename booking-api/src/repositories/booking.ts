@@ -14,7 +14,6 @@ export type Booking = {
 export interface BookingRepository {
   create(u: Booking): Promise<void>;
   get(id: string): Promise<Booking | undefined>;
-  bulkInsert(bookings: Booking[]): Promise<void>;
   getAvailableRooms(slot: number): Promise<Room[]>;
 }
 
@@ -37,12 +36,6 @@ export function buildBookingRepository(
     }
   }
 
-  async function getByRoom(roomId: string): Promise<Booking[]> {
-    const db = await getDatabase();
-    const bookings = await db(tableName).select().where('roomId', roomId);
-    return bookings;
-  }
-
   async function getAvailableRooms(slot: number): Promise<Room[]> {
     const db = await getDatabase();
     if (typeof slot !== 'number' || slot < 0 || slot > 23) {
@@ -59,18 +52,9 @@ export function buildBookingRepository(
     return rows;
   }
 
-  async function bulkInsert(bookings: Booking[]): Promise<void> {
-    const db = await getDatabase();
-    if (bookings.length === 0) {
-      return;
-    }
-    await db(tableName).insert(bookings);
-  }
-
   return {
     create,
     get,
     getAvailableRooms,
-    bulkInsert,
   };
 }
