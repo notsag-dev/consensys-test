@@ -2,7 +2,7 @@
 Solution for the meeting room booking exercise at Consensys. It consists of a REST API with a few endpoints to handle user registration and meeting rooms booking.
 
 ## Requirements
-If running using Docker, just Docker and Docker Compose are required. Otherwise Node 14 and a Postgres database are required.
+If running using Docker, just Docker and Docker Compose are required. Otherwise Node 14 and a Postgres 13 database are required.
 
 ## Project setup
 In both `booking-api` and `database` folders there is a file called .env.example. Please copy their contents into a file called .env in their respective folders, and set the desired key values and Postgres credentials that match with one another.
